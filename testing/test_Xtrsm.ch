@@ -25,7 +25,7 @@
       M = opts.msize[i];
       N = opts.nsize[i];
       
-      gflops = FLOPS_TRMM(COMPSIZE, opts.side, M, N ) / 1e9;
+      gflops = FLOPS_TRSM(COMPSIZE, opts.side, M, N ) / 1e9;
       
       printf("%5d %5d   ",
              (int) M, (int) N);
