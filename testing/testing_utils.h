@@ -646,6 +646,16 @@ void kblas_Cmake_hpd( int N, T* A, int lda )
 }*/
 
 //==============================================================================================
+#define FMULS_GEMM(m_, n_, k_) ((m_) * (n_) * (k_))
+#define FADDS_GEMM(m_, n_, k_) ((m_) * (n_) * (k_))
+
+double FLOPS_GEMM(int cs, int m, int n, int k){
+  if(cs == 1)
+    return FMULS_GEMM((double)(m), (double)(n), (double)(k)) + FADDS_GEMM((double)(m), (double)(n), (double)(k));
+  else
+    return 6. * FMULS_GEMM((double)(m), (double)(n), (double)(k)) + 2.0 * FADDS_GEMM((double)(m), (double)(n), (double)(k));
+}
+//==============================================================================================
 #define FMULS_TRMM_2(m_, n_) (0.5 * (n_) * (m_) * ((m_)+1))
 #define FADDS_TRMM_2(m_, n_) (0.5 * (n_) * (m_) * ((m_)-1))
 #define FMULS_TRMM(side_, m_, n_) ( ( (side_) == CblasLeft ) ? FMULS_TRMM_2((m_), (n_)) : FMULS_TRMM_2((n_), (m_)) )
@@ -666,15 +676,12 @@ double FLOPS_TRMM(int cs, CBLAS_SIDE side, int m, int n){
 #define FADDS_TRSM(side_, m_, n_) ( ( (side_) == CblasLeft ) ? FADDS_TRSM_2((m_), (n_)) : FADDS_TRSM_2((n_), (m_)) )
 
 
-double FLOPS_TRSM(float p, CBLAS_SIDE side, int m, int n){
-  return FMULS_TRSM(side, (double)(m), (double)(n)) + FADDS_TRSM(side, (double)(m), (double)(n));
+double FLOPS_TRSM(int cs, CBLAS_SIDE side, int m, int n){
+  if(cs == 1)
+    return FMULS_TRSM(side, (double)(m), (double)(n)) + FADDS_TRSM(side, (double)(m), (double)(n));
+  else
+    return 6. * FMULS_TRSM(side, (double)(m), (double)(n)) + 2. * FADDS_TRSM(side, (double)(m), (double)(n));
 }
-double FLOPS_TRSM(double p, CBLAS_SIDE side, int m, int n){
-  return FMULS_TRSM(side, (double)(m), (double)(n)) + FADDS_TRSM(side, (double)(m), (double)(n));
-}/*
-double FLOPS_TRSM(void p, CBLAS_SIDE side, int m, int n){
-  return 6. * FMULS_TRSM(side, (double)(m), (double)(n)) + 2. * FADDS_TRSM(side, (double)(m), (double)(n));
-}*/
 
 
 template<typename T>
