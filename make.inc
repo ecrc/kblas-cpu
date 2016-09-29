@@ -5,10 +5,11 @@
 CXX=icpc
 CC=icc
 
-#customize the name of the generated kblas library
-LIB_KBLAS_NAME=libkblas.a
+#customize the name of the generated static kblas library
+LIB_KBLAS_NAME=kblas-cpu
 
-CBLAS_LIB = -mkl=parallel
+#which library provides the CBLAS implementation
+BLAS_LIB = -mkl=parallel
 
 #ifeq (${CC}, gcc)
 #  COPTS+=-std=c99

@@ -25,7 +25,7 @@ $(OBJ_DIR)/%trsm.coo: %trsm.cpp
 #	$(NVCC) $(NVOPTS) $(NVOPTS_3) $(INC) -c $< -o $@
 
 KBLAS_DIR=$(KBLAS_ROOT)/lib
-LIBKBLAS=$(KBLAS_DIR)/$(LIB_KBLAS_NAME) 
+LIBKBLAS=$(KBLAS_DIR)/lib$(LIB_KBLAS_NAME).a
 
 all: $(LIBKBLAS)
 

@@ -11,10 +11,10 @@ LIB_PATH=
 LIB_PATH+= -L${_KBLAS_ROOT_}/lib
 
 # libraries to link against
-LIB= -lm -lkblas
-LIB+= $(CBLAS_LIB)
+LIB= -lm -l$(LIB_KBLAS_NAME)
+LIB+= $(BLAS_LIB)
 
-KBLAS_LIB=../lib/${LIB_KBLAS_NAME}
+KBLAS_LIB=../lib/lib${LIB_KBLAS_NAME}.a
 
 C_SRC=
 
