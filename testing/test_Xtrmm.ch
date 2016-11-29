@@ -1,6 +1,8 @@
 #ifndef _TEST_TRMM_
 #define _TEST_TRMM_
-  
+
+  extern int kblas_trmm_ib;
+
   int nruns = opts.nruns;
   int M, N;
   int Am, An, Bm, Bn;
@@ -13,6 +15,13 @@
   
   
   USING
+  
+  #ifdef USE_OPENMP
+  int NUM_THREADS = opts.omp_numthreads;
+  omp_set_num_threads(NUM_THREADS);
+  #endif//USE_OPENMP
+  
+  kblas_trmm_ib = opts.nb;
  
   printf("    M     N     kblasTRMM_REC GF/s (ms)  cblasTRMM GF/s (ms)  SP_REC   Error\n");
   printf("====================================================================\n");

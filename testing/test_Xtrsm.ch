@@ -1,6 +1,8 @@
 #ifndef _TEST_TRMM_
 #define _TEST_TRMM_
   
+  extern int kblas_trmm_ib;
+  
   int nruns = opts.nruns;
   int M, N;
   int Am, An, Bm, Bn;
@@ -13,6 +15,11 @@
   
   
   USING
+  
+  #ifdef USE_OPENMP
+  int NUM_THREADS = opts.omp_numthreads;
+  omp_set_num_threads(NUM_THREADS);
+  #endif//USE_OPENMP
  
   printf("    M     N     kblasTRMM_REC GF/s (ms)  cblasTRMM GF/s (ms)  SP_REC   Error\n");
   printf("====================================================================\n");
@@ -69,6 +76,11 @@
       
       for(int r = 0; r < nruns; r++)
       {
+        if(opts.time && !opts.check){
+          Xrand_matrix(Am, An, (TT*)h_A, lda);
+          Xrand_matrix(Bm, Bn, (TT*)h_B, ldb);
+          kblas_Xmake_hpd( Am, (TT*)h_A, lda );
+        }
         memcpy(h_R, h_B, sizeB * sizeof(TT));
         
         time = -gettime();
@@ -88,6 +100,11 @@
         
         for(int r = 0; r < nruns; r++)
         {
+          if(!opts.check){
+            Xrand_matrix(Am, An, (TT*)h_A, lda);
+            Xrand_matrix(Bm, Bn, (TT*)h_B, ldb);
+            kblas_Xmake_hpd( Am, (TT*)h_A, lda );
+          }
           memcpy(h_B, h_R, sizeB * sizeof(TT));
           
           time = -gettime();

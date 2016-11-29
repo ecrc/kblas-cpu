@@ -4,6 +4,9 @@
 
 #include <stdarg.h>
 #include <time.h>
+#ifdef USE_OPENMP
+#include "omp.h"
+#endif//USE_OPENMP
 
 #define NRUNS	(10)
 
@@ -238,19 +241,25 @@ double zget_max_error_matrix(double* ref, double* res, long m, long n, long lda)
 void srand_matrix(long rows, long cols, float* A, long LDA)
 {
   srand (time(NULL));
-    // fill in the entire matrix with random values
-    long i;
-    long size_a = cols * LDA;
-    for(i = 0; i < size_a; i++) A[i] = ( (float)rand() ) / (float)RAND_MAX;
+  // fill in the entire matrix with random values
+  long i;
+  long size_a = cols * LDA;
+  /*#ifdef USE_OPENMP
+  #pragma omp parallel for
+  #endif*/
+  for(i = 0; i < size_a; i++) A[i] = ( (float)rand() ) / (float)RAND_MAX;
 }
 
 void drand_matrix(long rows, long cols, double* A, long LDA)
 {
   srand (time(NULL));
-    // fill in the entire matrix with random values
-    long i;
-    long size_a = cols * LDA;
-    for(i = 0; i < size_a; i++) A[i] = ( (double)rand() ) / (double)RAND_MAX;
+  // fill in the entire matrix with random values
+  long i;
+  long size_a = cols * LDA;
+  /*#ifdef USE_OPENMP
+  #pragma omp parallel for
+  #endif*/
+  for(i = 0; i < size_a; i++) A[i] = ( (double)rand() ) / (double)RAND_MAX;
 }
 
 void crand_matrix(long rows, long cols, float* A, long LDA)
@@ -259,6 +268,9 @@ void crand_matrix(long rows, long cols, float* A, long LDA)
   // fill in the entire matrix with random values
   long i;
   long size_a = cols * LDA * 2;
+  /*#ifdef USE_OPENMP
+  #pragma omp parallel for
+  #endif*/
   for(i = 0; i < size_a; i++)
   {
     A[i]   = ( (float)rand() ) / (float)RAND_MAX;
@@ -271,6 +283,9 @@ void zrand_matrix(long rows, long cols, double* A, long LDA)
   // fill in the entire matrix with random values
   long i;
   long size_a = cols * LDA * 2;
+  /*#ifdef USE_OPENMP
+  #pragma omp parallel for
+  #endif*/
   for(i = 0; i < size_a; i++)
   {
     A[i] = ( (double)rand() ) / (double)RAND_MAX;
@@ -316,6 +331,9 @@ extern "C"{
     int warmup;
     int time;
     int bd;
+    #ifdef USE_OPENMP
+    int omp_numthreads;
+    #endif//USE_OPENMP
 
     // lapack flags
     CBLAS_UPLO uplo;
@@ -350,6 +368,9 @@ extern "C"{
     opts->warmup    = 0;
     opts->time    = 0;
     opts->bd    = -1;
+    #ifdef USE_OPENMP
+    opts->omp_numthreads = 20;
+    #endif//USE_OPENMP
 
     opts->uplo      = CblasLower;      
     opts->transA    = CblasNoTrans;    
@@ -476,6 +497,13 @@ extern "C"{
         kblas_assert( k >= 0, "error: -k %s is invalid; ensure k >= 0.\n", argv[i] );
       }
       
+      #ifdef USE_OPENMP
+      else if ( strcmp("--omp_threads", argv[i]) == 0 && i+1 < argc ) {
+        opts->omp_numthreads = atoi( argv[++i] );
+        kblas_assert( opts->omp_numthreads >= 1,
+                      "error: --omp_numthreads %s is invalid; ensure omp_numthreads >= 1.\n", argv[i] );
+      }
+      #endif//USE_OPENMP
       // ----- scalar arguments
       else if ( strcmp("--niter",   argv[i]) == 0 && i+1 < argc ) {
         opts->niter = atoi( argv[++i] );
@@ -622,6 +650,9 @@ template<class T>
 void kblas_Rmake_hpd( int N, T* A, int lda )
 {
   int i, j;
+  /*#ifdef USE_OPENMP
+  #pragma omp parallel for
+  #endif*/
   for( i=0; i<N; ++i ) {
     A[i*(1+lda)] = A[i*(1+lda)] + N;
     for( j=0; j<i; ++j ) {
@@ -633,6 +664,9 @@ template<class T>
 void kblas_Cmake_hpd( int N, T* A, int lda )
 {
   int i, j;
+  /*#ifdef USE_OPENMP
+  #pragma omp parallel for
+  #endif*/
   for( i=0; i<N; ++i ) {
     A[2*i*(1+lda)] = A[2*i*(1+lda)] + N;
     for( j=0; j<i; ++j ) {

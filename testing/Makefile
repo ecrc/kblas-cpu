@@ -13,6 +13,9 @@ LIB_PATH+= -L${_KBLAS_ROOT_}/lib
 # libraries to link against
 LIB= -lm -l$(LIB_KBLAS_NAME)
 LIB+= $(BLAS_LIB)
+ifdef _USE_OPENMP_
+LIB+= -liomp5
+endif
 
 KBLAS_LIB=../lib/lib${LIB_KBLAS_NAME}.a
 
@@ -42,10 +45,10 @@ BIN_DIR=./bin
 EXE=$(patsubst %.c,$(BIN_DIR)/%,$(C_SRC))
 
 $(OBJ_DIR)/test_%trmm.o: test_%trmm.c test_Xtrmm.ch testing_utils.h $(INC_SRC) $(KBLAS_LIB)
-	$(CXX) $(INCLUDES) -c $< -o $@
+	$(CXX) $(COPTS) $(INCLUDES) -c $< -o $@
 
 $(OBJ_DIR)/test_%trsm.o: test_%trsm.c test_Xtrsm.ch testing_utils.h $(INC_SRC) $(KBLAS_LIB)
-	$(CXX) $(INCLUDES) -c $< -o $@
+	$(CXX) $(COPTS) $(INCLUDES) -c $< -o $@
 
 #$(OBJ_DIR)/test_%gemm.o: test_%gemm.c test_Xgemm.ch testing_utils.h $(INC_SRC) $(KBLAS_LIB)
 #	$(CXX) $(INCLUDES) -c $< -o $@
