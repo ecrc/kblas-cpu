@@ -3,6 +3,7 @@
 #define _TESTING_UTILS_
 
 #include <stdarg.h>
+#include <time.h>
 
 #define NRUNS	(10)
 
@@ -236,6 +237,7 @@ double zget_max_error_matrix(double* ref, double* res, long m, long n, long lda)
 //=====================================================================================
 void srand_matrix(long rows, long cols, float* A, long LDA)
 {
+  srand (time(NULL));
     // fill in the entire matrix with random values
     long i;
     long size_a = cols * LDA;
@@ -244,6 +246,7 @@ void srand_matrix(long rows, long cols, float* A, long LDA)
 
 void drand_matrix(long rows, long cols, double* A, long LDA)
 {
+  srand (time(NULL));
     // fill in the entire matrix with random values
     long i;
     long size_a = cols * LDA;
@@ -252,6 +255,7 @@ void drand_matrix(long rows, long cols, double* A, long LDA)
 
 void crand_matrix(long rows, long cols, float* A, long LDA)
 {
+  srand (time(NULL));
   // fill in the entire matrix with random values
   long i;
   long size_a = cols * LDA * 2;
@@ -263,6 +267,7 @@ void crand_matrix(long rows, long cols, float* A, long LDA)
 
 void zrand_matrix(long rows, long cols, double* A, long LDA)
 {
+  srand (time(NULL));
   // fill in the entire matrix with random values
   long i;
   long size_a = cols * LDA * 2;

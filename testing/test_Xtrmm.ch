@@ -69,6 +69,11 @@
       
       for(int r = 0; r < nruns; r++)
       {
+        if(opts.time && !opts.check){
+          Xrand_matrix(Am, An, (TT*)h_A, lda);
+          Xrand_matrix(Bm, Bn, (TT*)h_B, ldb);
+          kblas_Xmake_hpd( Am, (TT*)h_A, lda );
+        }
         memcpy(h_R, h_B, sizeB * sizeof(TT));
         
         time = -gettime();
@@ -89,6 +94,11 @@
         
         for(int r = 0; r < nruns; r++)
         {
+          if(!opts.check){
+            Xrand_matrix(Am, An, (TT*)h_A, lda);
+            Xrand_matrix(Bm, Bn, (TT*)h_B, ldb);
+            kblas_Xmake_hpd( Am, (TT*)h_A, lda );
+          }
           if(opts.time)
             memcpy(h_B, h_R, sizeB * sizeof(TT));
           
