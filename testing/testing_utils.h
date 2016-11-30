@@ -41,7 +41,12 @@ const char *usage =
 #define USAGE printf("usage: -N m[:n] --range m-start:m-end:m-step -m INT -n INT -L|U -SL|SR -DN|DU -[NTC][NTC] -c --niter INT --dev devID\n\n"); \
 printf("%s\n", usage);
 
-#define USING printf("side %c, uplo %c, trans %c, diag %c, db %d\n", opts.side, opts.uplo, opts.transA, opts.diag, opts.nb);
+#define USING printf("side %c, uplo %c, trans %c, diag %c, nb %d\n", \
+(opts.side == CblasLeft ? 'L' : 'R'), \
+(opts.uplo == CblasUnit ? 'U' : 'L'), \
+(opts.transA == CblasTrans ? 'T' : 'N'), \
+(opts.diag == CblasUnit ? 'U' : 'N'), \
+opts.nb);
 
 // random number gen --------------
 float kblas_srand()

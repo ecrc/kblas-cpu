@@ -15,7 +15,7 @@ BLAS_LIB = -mkl=parallel
 #  COPTS+=-std=c99
 #endif
 
-_USE_OPENMP_=TRUE
+#_USE_OPENMP_=TRUE
 ifdef _USE_OPENMP_
   COPTS+=-DUSE_OPENMP -openmp 
 endif

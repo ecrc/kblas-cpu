@@ -31,8 +31,8 @@ C_SRC+=	              \
 	test_ctrsm.c  \
 	test_ztrsm.c
 	
-#C_SRC+=	              \
-#	test_dgemm.c
+C_SRC+=	              \
+	test_dgemm.c
 
 
 
@@ -50,8 +50,8 @@ $(OBJ_DIR)/test_%trmm.o: test_%trmm.c test_Xtrmm.ch testing_utils.h $(INC_SRC) $
 $(OBJ_DIR)/test_%trsm.o: test_%trsm.c test_Xtrsm.ch testing_utils.h $(INC_SRC) $(KBLAS_LIB)
 	$(CXX) $(COPTS) $(INCLUDES) -c $< -o $@
 
-#$(OBJ_DIR)/test_%gemm.o: test_%gemm.c test_Xgemm.ch testing_utils.h $(INC_SRC) $(KBLAS_LIB)
-#	$(CXX) $(INCLUDES) -c $< -o $@
+$(OBJ_DIR)/test_%gemm.o: test_%gemm.c test_Xgemm.ch testing_utils.h $(INC_SRC) $(KBLAS_LIB)
+	$(CXX) $(COPTS) $(INCLUDES) -c $< -o $@
 
 $(OBJ_DIR)/%.o: %.c $(INC_SRC) $(KBLAS_LIB)
 	$(CC) $(COPTS) $(INCLUDES) -c $< -o $@

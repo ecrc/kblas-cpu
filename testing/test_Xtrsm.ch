@@ -86,6 +86,7 @@
         memcpy(h_R, h_B, sizeB * sizeof(TT));
         
         time = -gettime();
+        
         kblas_Xtrsm(opts.order, opts.side, opts.uplo, opts.transA, opts.diag,
                     M, N,
                     alpha, h_A, lda,
