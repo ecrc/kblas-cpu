@@ -4,9 +4,9 @@
 
 #include <stdarg.h>
 #include <time.h>
-#ifdef USE_OPENMP
+//#ifdef USE_OPENMP
 #include "omp.h"
-#endif//USE_OPENMP
+//#endif//USE_OPENMP
 
 #define NRUNS	(10)
 
@@ -41,12 +41,13 @@ const char *usage =
 #define USAGE printf("usage: -N m[:n] --range m-start:m-end:m-step -m INT -n INT -L|U -SL|SR -DN|DU -[NTC][NTC] -c --niter INT --dev devID\n\n"); \
 printf("%s\n", usage);
 
-#define USING printf("side %c, uplo %c, trans %c, diag %c, nb %d\n", \
+#define USING printf("side %c, uplo %c, trans %c, diag %c, nb %d, threads %d\n", \
 (opts.side == CblasLeft ? 'L' : 'R'), \
 (opts.uplo == CblasUnit ? 'U' : 'L'), \
 (opts.transA == CblasTrans ? 'T' : 'N'), \
 (opts.diag == CblasUnit ? 'U' : 'N'), \
-opts.nb);
+opts.nb, \
+opts.omp_numthreads );
 
 // random number gen --------------
 float kblas_srand()
@@ -249,9 +250,9 @@ void srand_matrix(long rows, long cols, float* A, long LDA)
   // fill in the entire matrix with random values
   long i;
   long size_a = cols * LDA;
-  /*#ifdef USE_OPENMP
+  #ifdef USE_OPENMP
   #pragma omp parallel for
-  #endif*/
+  #endif
   for(i = 0; i < size_a; i++) A[i] = ( (float)rand() ) / (float)RAND_MAX;
 }
 
@@ -261,9 +262,9 @@ void drand_matrix(long rows, long cols, double* A, long LDA)
   // fill in the entire matrix with random values
   long i;
   long size_a = cols * LDA;
-  /*#ifdef USE_OPENMP
+  #ifdef USE_OPENMP
   #pragma omp parallel for
-  #endif*/
+  #endif
   for(i = 0; i < size_a; i++) A[i] = ( (double)rand() ) / (double)RAND_MAX;
 }
 
@@ -273,9 +274,9 @@ void crand_matrix(long rows, long cols, float* A, long LDA)
   // fill in the entire matrix with random values
   long i;
   long size_a = cols * LDA * 2;
-  /*#ifdef USE_OPENMP
+  #ifdef USE_OPENMP
   #pragma omp parallel for
-  #endif*/
+  #endif
   for(i = 0; i < size_a; i++)
   {
     A[i]   = ( (float)rand() ) / (float)RAND_MAX;
@@ -288,9 +289,9 @@ void zrand_matrix(long rows, long cols, double* A, long LDA)
   // fill in the entire matrix with random values
   long i;
   long size_a = cols * LDA * 2;
-  /*#ifdef USE_OPENMP
+  #ifdef USE_OPENMP
   #pragma omp parallel for
-  #endif*/
+  #endif
   for(i = 0; i < size_a; i++)
   {
     A[i] = ( (double)rand() ) / (double)RAND_MAX;
@@ -336,9 +337,9 @@ extern "C"{
     int warmup;
     int time;
     int bd;
-    #ifdef USE_OPENMP
+    //#ifdef USE_OPENMP
     int omp_numthreads;
-    #endif//USE_OPENMP
+    //#endif//USE_OPENMP
 
     // lapack flags
     CBLAS_UPLO uplo;
@@ -373,9 +374,9 @@ extern "C"{
     opts->warmup    = 0;
     opts->time    = 0;
     opts->bd    = -1;
-    #ifdef USE_OPENMP
+    //#ifdef USE_OPENMP
     opts->omp_numthreads = 20;
-    #endif//USE_OPENMP
+    //#endif//USE_OPENMP
 
     opts->uplo      = CblasLower;      
     opts->transA    = CblasNoTrans;    
@@ -502,13 +503,13 @@ extern "C"{
         kblas_assert( k >= 0, "error: -k %s is invalid; ensure k >= 0.\n", argv[i] );
       }
       
-      #ifdef USE_OPENMP
+      //#ifdef USE_OPENMP
       else if ( strcmp("--omp_threads", argv[i]) == 0 && i+1 < argc ) {
         opts->omp_numthreads = atoi( argv[++i] );
         kblas_assert( opts->omp_numthreads >= 1,
                       "error: --omp_numthreads %s is invalid; ensure omp_numthreads >= 1.\n", argv[i] );
       }
-      #endif//USE_OPENMP
+      //#endif//USE_OPENMP
       // ----- scalar arguments
       else if ( strcmp("--niter",   argv[i]) == 0 && i+1 < argc ) {
         opts->niter = atoi( argv[++i] );
@@ -655,9 +656,9 @@ template<class T>
 void kblas_Rmake_hpd( int N, T* A, int lda )
 {
   int i, j;
-  /*#ifdef USE_OPENMP
+  #ifdef USE_OPENMP
   #pragma omp parallel for
-  #endif*/
+  #endif
   for( i=0; i<N; ++i ) {
     A[i*(1+lda)] = A[i*(1+lda)] + N;
     for( j=0; j<i; ++j ) {
@@ -669,9 +670,9 @@ template<class T>
 void kblas_Cmake_hpd( int N, T* A, int lda )
 {
   int i, j;
-  /*#ifdef USE_OPENMP
+  #ifdef USE_OPENMP
   #pragma omp parallel for
-  #endif*/
+  #endif
   for( i=0; i<N; ++i ) {
     A[2*i*(1+lda)] = A[2*i*(1+lda)] + N;
     for( j=0; j<i; ++j ) {
@@ -818,6 +819,11 @@ int _kblas_error( int err, const char* func, const char* file, int line );
 #define TESTING_MALLOC_CPU( ptr, T, size)                       \
   if ( (ptr = (T*) malloc( (size)*sizeof( T ) ) ) == NULL) {    \
     fprintf( stderr, "!!!! malloc_cpu failed for: %s\n", #ptr ); \
+    exit(-1);                                                   \
+  }
+#define TESTING_MALLOC_MM( ptr, T, size)                       \
+if ( (ptr = (T*) _mm_malloc((size)*sizeof( T ), 64)) == NULL ) {    \
+    fprintf( stderr, "!!!! mm_malloc failed for: %s\n", #ptr ); \
     exit(-1);                                                   \
   }
 #endif	//_TESTING_UTILS_

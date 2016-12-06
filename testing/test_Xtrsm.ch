@@ -16,14 +16,14 @@
   
   USING
   
-  #ifdef USE_OPENMP
+  //#ifdef USE_OPENMP
   int NUM_THREADS = opts.omp_numthreads;
   omp_set_num_threads(NUM_THREADS);
-  #endif//USE_OPENMP
+  //#endif//USE_OPENMP
   
   kblas_trsm_ib = opts.nb;
  
-  printf("    M     N     kblasTRMM_REC GF/s (ms)  cblasTRMM GF/s (ms)  SP_REC   Error\n");
+  printf("    M     N     kblasTRSM_REC GF/s (ms)  cblasTRSM GF/s (ms)  SP_REC   Error\n");
   printf("====================================================================\n");
   for( int i = 0; i < opts.ntest; ++i ) {
     for( int iter = 0; iter < opts.niter; ++iter ) {
@@ -76,28 +76,6 @@
       }
       double time = 0;
       
-      for(int r = 0; r < nruns; r++)
-      {
-        if(opts.time && !opts.check){
-          Xrand_matrix(Am, An, (TT*)h_A, lda);
-          Xrand_matrix(Bm, Bn, (TT*)h_B, ldb);
-          kblas_Xmake_hpd( Am, (TT*)h_A, lda );
-        }
-        memcpy(h_R, h_B, sizeB * sizeof(TT));
-        
-        time = -gettime();
-        
-        kblas_Xtrsm(opts.order, opts.side, opts.uplo, opts.transA, opts.diag,
-                    M, N,
-                    alpha, h_A, lda,
-                           h_R, ldb);
-        time += gettime();
-        perf = gflops / time;
-        kblas_avg_perf += perf;
-        kblas_sdev_perf += perf * perf;
-        kblas_avg_time += time;
-      }
-      
       if(opts.time){
         memcpy(h_R, h_B, sizeB * sizeof(TT));
         
@@ -121,6 +99,28 @@
           ref_sdev_perf += perf * perf;
           ref_avg_time += time;
         }
+      }
+      
+      for(int r = 0; r < nruns; r++)
+      {
+        if(opts.time && !opts.check){
+          Xrand_matrix(Am, An, (TT*)h_A, lda);
+          Xrand_matrix(Bm, Bn, (TT*)h_B, ldb);
+          kblas_Xmake_hpd( Am, (TT*)h_A, lda );
+        }
+        memcpy(h_R, h_B, sizeB * sizeof(TT));
+        
+        time = -gettime();
+        
+        kblas_Xtrsm(opts.order, opts.side, opts.uplo, opts.transA, opts.diag,
+                    M, N,
+                    alpha, h_A, lda,
+                           h_R, ldb);
+        time += gettime();
+        perf = gflops / time;
+        kblas_avg_perf += perf;
+        kblas_sdev_perf += perf * perf;
+        kblas_avg_time += time;
       }
 
       if(opts.check){
