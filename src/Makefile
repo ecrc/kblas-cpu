@@ -10,19 +10,17 @@ OBJ_DIR=./obj
 ALL_OBJ = $(patsubst %.cpp,$(OBJ_DIR)/%.coo,$(KBLAS_SRC))
 
 INC=-I${KBLAS_ROOT}/include
+DEPS=../make.inc Xtr_common.ch ${KBLAS_ROOT}/include/kblas.h
 
-
-$(OBJ_DIR)/%tr_common.coo: %tr_common.cpp %tr_common.ch
+$(OBJ_DIR)/%tr_common.coo: %tr_common.cpp $(DEPS)
 	$(CXX) $(COPTS) $(INC) -c $< -o $@
 
-$(OBJ_DIR)/%trmm.coo: %trmm.cpp 
+$(OBJ_DIR)/%trmm.coo: %trmm.cpp $(DEPS)
 	$(CXX) $(COPTS) $(INC) -c $< -o $@
 
-$(OBJ_DIR)/%trsm.coo: %trsm.cpp
+$(OBJ_DIR)/%trsm.coo: %trsm.cpp $(DEPS)
 	$(CXX) $(COPTS) $(INC) -c $< -o $@
 
-#$(OBJ_DIR)/%trsm.cu_o: %trsm.cu %tr_common.ch
-#	$(NVCC) $(NVOPTS) $(NVOPTS_3) $(INC) -c $< -o $@
 
 KBLAS_DIR=$(KBLAS_ROOT)/lib
 LIBKBLAS=$(KBLAS_DIR)/lib$(LIB_KBLAS_NAME).a
