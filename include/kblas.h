@@ -35,7 +35,11 @@
 #define _KBLAS_H_
 
 #include "defs.h"
+#ifdef USE_MKL
+#include <mkl.h>
+#else
 #include "cblas.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,53 +47,53 @@ extern "C" {
   
 
 //CPU API
-void kblas_strmm(const enum CBLAS_ORDER Order,
-                 const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo,
-                 const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_DIAG Diag,
+void kblas_strmm(const CBLAS_ORDER Order,
+                 const CBLAS_SIDE Side, const CBLAS_UPLO Uplo,
+                 const CBLAS_TRANSPOSE TransA, const CBLAS_DIAG Diag,
                  const int M, const int N,
                  const float alpha, const float *A, const int lda,
                                           float *B, const int ldb);
-void kblas_dtrmm(const enum CBLAS_ORDER Order,
-                 const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo,
-                 const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_DIAG Diag,
+void kblas_dtrmm(const CBLAS_ORDER Order,
+                 const CBLAS_SIDE Side, const CBLAS_UPLO Uplo,
+                 const CBLAS_TRANSPOSE TransA, const CBLAS_DIAG Diag,
                  const int M, const int N,
                  const double alpha, const double *A, const int lda,
                                            double *B, const int ldb);
-void kblas_ctrmm(const enum CBLAS_ORDER Order,
-                 const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo,
-                 const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_DIAG Diag,
+void kblas_ctrmm(const CBLAS_ORDER Order,
+                 const CBLAS_SIDE Side, const CBLAS_UPLO Uplo,
+                 const CBLAS_TRANSPOSE TransA, const CBLAS_DIAG Diag,
                  const int M, const int N,
                  const void *alpha, const void *A, const int lda,
                                           void *B, const int ldb);
-void kblas_ztrmm(const enum CBLAS_ORDER Order,
-                 const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo,
-                 const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_DIAG Diag,
+void kblas_ztrmm(const CBLAS_ORDER Order,
+                 const CBLAS_SIDE Side, const CBLAS_UPLO Uplo,
+                 const CBLAS_TRANSPOSE TransA, const CBLAS_DIAG Diag,
                  const int M, const int N,
                  const void *alpha, const void *A, const int lda,
                                           void *B, const int ldb);
 
 
-void kblas_strsm(const enum CBLAS_ORDER Order,
-                 const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo,
-                 const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_DIAG Diag,
+void kblas_strsm(const CBLAS_ORDER Order,
+                 const CBLAS_SIDE Side, const CBLAS_UPLO Uplo,
+                 const CBLAS_TRANSPOSE TransA, const CBLAS_DIAG Diag,
                  const int M, const int N,
                  const float alpha, const float *A, const int lda,
                  float *B, const int ldb);
-void kblas_dtrsm(const enum CBLAS_ORDER Order,
-                 const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo,
-                 const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_DIAG Diag,
+void kblas_dtrsm(const CBLAS_ORDER Order,
+                 const CBLAS_SIDE Side, const CBLAS_UPLO Uplo,
+                 const CBLAS_TRANSPOSE TransA, const CBLAS_DIAG Diag,
                  const int M, const int N,
                  const double alpha, const double *A, const int lda,
                                             double *B, const int ldb);
-void kblas_ctrsm(const enum CBLAS_ORDER Order,
-                 const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo,
-                 const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_DIAG Diag,
+void kblas_ctrsm(const CBLAS_ORDER Order,
+                 const CBLAS_SIDE Side, const CBLAS_UPLO Uplo,
+                 const CBLAS_TRANSPOSE TransA, const CBLAS_DIAG Diag,
                  const int M, const int N,
                  const void *alpha, const void *A, const int lda,
                                           void *B, const int ldb);
-void kblas_ztrsm(const enum CBLAS_ORDER Order,
-                 const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo,
-                 const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_DIAG Diag,
+void kblas_ztrsm(const CBLAS_ORDER Order,
+                 const CBLAS_SIDE Side, const CBLAS_UPLO Uplo,
+                 const CBLAS_TRANSPOSE TransA, const CBLAS_DIAG Diag,
                  const int M, const int N,
                  const void *alpha, const void *A, const int lda,
                                           void *B, const int ldb);

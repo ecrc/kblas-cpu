@@ -1,16 +1,25 @@
 
+
+_USE_MKL_=TRUE
+
+##================================
+
 # specify compilers
 #CXX=g++
 #CC=gcc
 CXX=icpc
 CC=icc
 COPTS = -O3 -qopenmp
+
+##================================
 #customize the name of the generated static kblas library
 LIB_KBLAS_NAME=kblas-cpu
 
-#which library provides the CBLAS/BLAS implementation
+##================================
+#which library provides the CBLAS implementation
 BLAS_LIB = -mkl=parallel
 
+##================================
 #ifeq (${CC}, gcc)
 #  COPTS+=-std=c99
 #endif
@@ -19,4 +28,9 @@ BLAS_LIB = -mkl=parallel
 #_USE_OPENMP_=TRUE
 ifdef _USE_OPENMP_
   COPTS+=-DUSE_OPENMP -qopenmp 
+endif
+
+##================================
+ifdef _USE_MKL_
+  COPTS+= -DUSE_MKL
 endif
